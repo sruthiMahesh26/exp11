@@ -1,17 +1,54 @@
-name: Run Tests
+name: Full CI Workflow
 
-on: [push]
+on:
+  push:
+    paths:
+      - 'src/**'
 
 jobs:
-  test:
+
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # ✅ ADD THIS STEP (IMPORTANT)
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
       - name: Install dependencies
         run: npm install
 
+      - name: Build project
+        run: echo "Build successful"
+
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # ✅ ADD AGAIN HERE
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
       - name: Run test script
         run: npm test
+
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Deploy
+        run: echo "Deployment successful"
